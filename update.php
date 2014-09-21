@@ -12,7 +12,7 @@ $sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime
 			$wz = get_read($re_row['wzurl'],$key[1]);
 			mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}' where id = {$re_row['id']}");
 			mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
-			if($time-($re_row['gtime']>86400*$re_row['days'])){
+			if($time-$re_row['gtime']>86400*$re_row['days']){
 				mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
 			}
 			sleep(3);
