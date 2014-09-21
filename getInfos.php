@@ -33,6 +33,7 @@
 <?php
 require 'comon.php';
 require_once 'Snoopy.class.php';
+require_once 'login.php';
 $sql=mysqli_query($connect,"select * from wx_type order by ctime desc");
 if(isset($_POST['tijiao'])){
 $gname = $_POST['gname'];
@@ -169,7 +170,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,b.`wx_type`,c.`wztitle`,c.`
       <td><?php echo $re_row['wx_type']; ?></td>
       <td><?php echo $re_row['gname']; ?></td>
       <td><?php echo $re_row['gnumber']; ?></td>
-      <td><?php echo $re_row['gtime']; ?></td>
+      <td><?php echo date('Y-m-d', $re_row['gtime']); ?></td>
       <td><?php echo $re_row['numbers']; ?></td>
       <td><?php urlstates($re_row['updates']); ?></td>
       <td><?php echo date('Y-m-d', $re_row['ctime']); ?></td>

@@ -13,7 +13,7 @@ for(;;){
         if($openid){
             $articles = $sg->list_article($openid,$newrow[0]);
             for($i=0;$i<count($articles);$i++){
-                mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','{$row['gtime']}','{$row['numbers']}','{$row['days']}','".time()."','{$row['gtime']}')");
+                mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
                 mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
             }
         }
