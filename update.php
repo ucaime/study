@@ -2,22 +2,19 @@
 require_once 'Snoopy.class.php';
 require_once 'comon.php';
 for(;;){
-$time = date("Hi");
-$sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime`<=$time and CAST(`ntime`/100 AS SIGNED)-CAST(`gtime`/100 AS SIGNED) <= `days`*24 order by ctime desc");
+$time = time();
+$sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime`<=$time order by ctime desc");
 	while($re_row = mysqli_fetch_array($sql)){
-		$keysql = mysqli_query($connect,"select * from wx_keys order by ctime desc");
+		$keysql = mysqli_query($connect,"select * from wx_keys where $time-`ctime`<17200 order by ctime asc");
 		$key = mysqli_fetch_row($keysql);
-		if(time()-$key[2]>7200){
-			break;
-		}
-		if($re_row){
-			if($re_row['ntime']>2400){
-                $ntime = 0+$re_row['numbers']*100;
-            }else{
-                $ntime = $re_row['ntime']+$re_row['numbers']*100;}
+		if($re_row && $key){
+            $ntime = $re_row['ntime']+$re_row['numbers']*3600;
 			$wz = get_read($re_row['wzurl'],$key[1]);
 			mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}' where id = {$re_row['id']}");
 			mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
+			if($time-($re_row['gtime']>86400*$re_row['days'])){
+				mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
+			}
 			sleep(3);
 		}
 	}

@@ -3,21 +3,16 @@ require 'comon.php';
 require_once 'Snoopy.class.php';
 $sg = new sogouwx();
  for(;;){
-    $time = date("Hi");
+    $time = time();
     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
     while($row = mysqli_fetch_assoc($sql)) {
-        if($row){
-            if($row['ntime']>2400){
-                $ntime = 0+$row['numbers']*100;
-            }else{
-                $ntime = $row['ntime']+$row['numbers']*100;}
+        $ntime = $row['ntime']+$row['numbers']*3600;
         $newsql = mysqli_query($connect,"SELECT `wzurl` FROM `wx_article` WHERE `uid`='{$row['id']}' order by `ctime` desc;");
         $newrow = mysqli_fetch_row($newsql);
         $openid = $sg->get_openid($row['gname'], $row['gnumber']);
         $articles = $sg->list_article($openid,$newrow[0]);
         for($i=0;$i<count($articles);$i++){
-            mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','{$row['gtime']}','{$row['numbers']}','{$row['days']}','".time()."','{$row['gtime']}')");
-        }
+        mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','{$row['gtime']}','{$row['numbers']}','{$row['days']}','".time()."','{$row['gtime']}')");
         mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
         }
     }
@@ -85,9 +80,15 @@ class sogouwx{
     }
 
     function list_article($openid,$wzurl){
+       $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&t=".time();
+        //echo "$url<br>";
         $snoopy = new Snoopy;
+        $snoopy->fetch($url);
+        $content = $snoopy->results;
+        preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
+        // echo $totalPages[1];die;
         $content = '';
-        for ($i=1; $i <= 2; $i++) { 
+        for ($i=1; $i <= (int)$totalPages[1]; $i++) { 
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;

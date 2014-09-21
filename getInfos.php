@@ -17,7 +17,7 @@ $type = $_POST['gtype'];
 $wzurl = $_POST['wzurl'];
 $numbers = $_POST['numbers'];
 $days = $_POST['days'];
-$gtime = $_POST['gtime'];
+$gtime = strtotime($_POST['gtime']);
 $cname = $_POST['cname'];
 $ctime = time();
 $update = $_POST['update'];
@@ -67,7 +67,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
   <input type="text" name="days" >
   <br>
   开始　时间:
-  <input type="text" name="gtime" >格式为:时分,例12点05为:1205
+  <input type="text" name="gtime" >格式为:年月日时分,例2014年9月21日12点05为:201409211205
   <br>
   创　建　人:
   <input type="text" name="cname" >
