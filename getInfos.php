@@ -37,6 +37,14 @@ $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_article`
 }
 header("Location: getInfos.php");
 }
+if(isset($_POST['add'])){
+  $ctime = time();
+  $wxkeys = $_POST['wxkeys'];
+  $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_keys` 
+(`keys`, `ctime`) VALUES 
+('$wxkeys', '$ctime');") or die("失败");
+  header("Location: getInfos.php");
+}
 ?>
 <form action="getInfos.php" method="post" style="float:left;">
   公众号名称:
@@ -74,6 +82,10 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
   <br>
   是否自动更新:<input type="text" name="update">不填文章url有效，0不更新，1更新
   <input type="submit" name="tijiao" value="提交">
+</form>
+<form action="getInfos.php" method="post" style="float:left;">
+key:<input type="text" name="wxkeys">
+<input type="submit" name="add" value="提交">
 </form>
 </body>
 </html>

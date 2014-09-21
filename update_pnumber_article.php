@@ -2,7 +2,7 @@
 require 'comon.php';
 require_once 'Snoopy.class.php';
 $sg = new sogouwx();
- for(;;){
+for(;;){
     $time = time();
     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
     while($row = mysqli_fetch_assoc($sql)) {
@@ -10,10 +10,12 @@ $sg = new sogouwx();
         $newsql = mysqli_query($connect,"SELECT `wzurl` FROM `wx_article` WHERE `uid`='{$row['id']}' order by `ctime` desc;");
         $newrow = mysqli_fetch_row($newsql);
         $openid = $sg->get_openid($row['gname'], $row['gnumber']);
-        $articles = $sg->list_article($openid,$newrow[0]);
-        for($i=0;$i<count($articles);$i++){
-        mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','{$row['gtime']}','{$row['numbers']}','{$row['days']}','".time()."','{$row['gtime']}')");
-        mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
+        if($openid){
+            $articles = $sg->list_article($openid,$newrow[0]);
+            for($i=0;$i<count($articles);$i++){
+                mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','{$row['gtime']}','{$row['numbers']}','{$row['days']}','".time()."','{$row['gtime']}')");
+                mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
+            }
         }
     }
     sleep(1);
@@ -62,15 +64,19 @@ class sogouwx{
                             $openid=$arr[1];
                             break;
                         }else{
-                            echo "微信号：$weixin 的OPENID出错!<br>";
+                            // echo "微信号：$weixin 的OPENID出错!<br>";
+                            $openid='';
                             continue;
                         }
                     }else{//isn't this weixin
                         //echo "微信名：".$UserData['query'].", 微信号：$weixin !<br>";
+                        $openid='';
                         continue;
                     }
                 }else{
-                    echo "这个块没有微信号标志！<br>";
+                    // echo "这个块没有微信号标志！<br>";
+                    $openid='';
+                    continue;
                 }
             }
             $page++;
@@ -83,12 +89,12 @@ class sogouwx{
        $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&t=".time();
         //echo "$url<br>";
         $snoopy = new Snoopy;
-        $snoopy->fetch($url);
-        $content = $snoopy->results;
-        preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
+        // $snoopy->fetch($url);
+        // $content = $snoopy->results;
+        // preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
         // echo $totalPages[1];die;
         $content = '';
-        for ($i=1; $i <= (int)$totalPages[1]; $i++) { 
+        for ($i=1; $i <= 2; $i++) { 
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;
