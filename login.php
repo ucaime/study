@@ -12,7 +12,7 @@ else{
         echo 'members only, please login';
         echo '<br> <form method="post" action="getInfos.php" >
         <p>username: <input type="text" name="uname" value="" /></p>
-        <p>password: <input type="text" name="pwd" value="" /></p>
+        <p>password: <input type="password" name="pwd" value="" /></p>
         <p><input type="submit"  value="login" /></p>
         </form>';
         exit ;
