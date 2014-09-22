@@ -13,7 +13,10 @@ for(;;){
         if($openid){
             $articles = $sg->list_article($openid,$newrow[0]);
             for($i=0;$i<count($articles);$i++){
-                mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
+                $wzlist = mysqli_query($connect,"select * from wx_article where wzurl='{$articles[$i]['url']}' limit 1;");
+                if(!$wzlist){
+                    mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
+                }
             }
             mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
         }
@@ -80,7 +83,7 @@ class sogouwx{
                 }
             }
             $page++;
-            sleep(1);
+            sleep(2);
         }
         return $openid;
     }
@@ -98,7 +101,7 @@ class sogouwx{
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;
-            sleep(1);
+            sleep(2);
         }
         $block = $content;
         $arts = array();
@@ -107,7 +110,7 @@ class sogouwx{
             $cur_block="";
             $first_pos=stripos($block,"<?xml version=");
             if($first_pos===false){
-                echo "Can't find start!<br>";
+                // echo "Can't find start!<br>";
                 break;
             }
             $end_pos=stripos($block,"<?xml version=",$first_pos+20);

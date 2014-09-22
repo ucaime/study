@@ -56,10 +56,15 @@ $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_article`
 (`uid`, `wzurl`, `imgurl`, `wztitle`, `wzcontent`, `description`, `wzreads`, `wzsuports`, `ctime`, `gtime`, `ntime`,`numbers`, `days`, `state`, `uctime`) VALUES 
 ('$id[0]', '$wzurl', '', '', NULL, '', '0', '0', '$ctime', '$gtime','$gtime', '$numbers', '$days', '0', '$ctime');") or die("失败");
 }else{
+  $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `gnumber`='$gnumber';");
+    $row = mysqli_fetch_array($sql);
+    if($row){
+        echo "该公众号已经收录,文章会定期更新.";
+    }else{
 	$sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_pinfo` 
 (`tid`, `gname`, `gnumber`, `ctime`, `cname`, `days`, `ntime`,`gtime`, `numbers`,`updates`) VALUES 
 ('$type', '$gname', '$gnumber', '$ctime', '$cname', '$days', '$gtime','$gtime', '$numbers','$update');") or die("失败");
-}
+}}
 header("Location: getInfos.php");
 }
 if(isset($_POST['add'])){
@@ -68,6 +73,15 @@ if(isset($_POST['add'])){
   $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_keys` 
 (`keys`, `ctime`) VALUES 
 ('$wxkeys', '$ctime');") or die("失败");
+  header("Location: getInfos.php");
+}
+if(isset($_POST['typesadd'])){
+  $ctime = time();
+  $types = $_POST['types'];
+  $uname = $_POST['uname'];
+  $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_type` 
+(`wx_type`, `ctime`,`cname`) VALUES 
+('$types', '$ctime','$uname');") or die("失败");
   header("Location: getInfos.php");
 }
 function states($num){
@@ -89,6 +103,10 @@ if(isset($_POST['urlchange'])){
   mysqli_query($connect,"UPDATE wx_article SET state=1 where id in ($ID_url)");
   header("Location: getInfos.php");
   exit;
+}
+function th($str){
+  $title = str_replace(array("u201c","u201d","u2026","u200b","u2014"),array("“","”","...","","——"),$str);
+  return $title;
 }
 ?>
 <div style="float:left">
@@ -134,6 +152,11 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
 <form action="getInfos.php" method="post">
 key:<input type="text" name="wxkeys">
 <input type="submit" name="add" value="提交">
+</form>
+<form action="getInfos.php" method="post">
+分类:<input type="text" name="types">
+提交人:<input type="text" name="uname">
+<input type="submit" name="typesadd" value="提交">
 </form>
 </div>
 <div style="clear:both"></div>
@@ -211,7 +234,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,b.`wx_type`,c.`wztitle`,c.`
       <td><?php echo $wenzhang['id']; ?></td>
       <td><?php echo $wenzhang['gname']; ?></td>
       <td><?php echo $wenzhang['wx_type']; ?></td>
-      <td><?php echo $wenzhang['wztitle']; ?></td>
+      <td><?php echo th($wenzhang['wztitle']); ?></td>
       <td><?php echo $wenzhang['wzreads']; ?></td>
       <td><?php echo $wenzhang['wzsuports']; ?></td>
       <td><?php echo date('Y-m-d', $wenzhang['gtime']); ?></td>
