@@ -24,6 +24,8 @@ for(;;){
             }else{
                 mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$nntime' WHERE (`id`='{$row['id']}');");
             }
+        }else{
+            mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$nntime' WHERE (`id`='{$row['id']}');");
         }
     }
     sleep(1);
