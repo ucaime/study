@@ -156,9 +156,13 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
 key:<input type="text" name="wxkeys">
 <input type="submit" name="add" value="提交">
 </form>
+<?php if($ktime>0){ ?>
 key还有:<?php echo $ktime; ?>分钟失效
+<?php }else{ ?>
+没有有效的key
+<?php } ?>
 <form action="getInfos.php" method="post">
-分类:<input type="text" name="types">
+公众号类别:<input type="text" name="types">
 提交人:<input type="text" name="uname">
 <input type="submit" name="typesadd" value="提交">
 </form>
@@ -169,7 +173,7 @@ key还有:<?php echo $ktime; ?>分钟失效
 <div style="float:left;">
 <?php
 $gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`gtime`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id where `updates` = 1 order by ctime desc");
-$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.uctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where c.state=0 order by uctime desc;");
+$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.uctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where c.state=0 order by uctime desc;");
 ?>
 公众号管理
 <form id="gzhgl" action="getInfos.php" method="post">
@@ -218,8 +222,9 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,b.`wx_type`,c.`wztitle`,c.`
     <tr>
       <td>全选<input type="checkbox" onclick='chkall("wzlj",this)' value="全选"></td>
       <td>编号</td>
-      <td>所属类型</td>
       <td>公账号名称</td>
+      <td>微信号</td>
+      <td>所属类型</td>
       <td>文章标题</td>
       <td>阅读数</td>
       <td>点赞数</td>
@@ -237,6 +242,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,b.`wx_type`,c.`wztitle`,c.`
       <td><input name="wz[]" type="checkbox" id="wz[]" value="<?php echo $wenzhang['id'] ?>"/></td>
       <td><?php echo $wenzhang['id']; ?></td>
       <td><?php echo $wenzhang['gname']; ?></td>
+      <td><?php echo $wenzhang['gnumber']; ?></td>
       <td><?php echo $wenzhang['wx_type']; ?></td>
       <td><?php echo th($wenzhang['wztitle']); ?></td>
       <td><?php echo $wenzhang['wzreads']; ?></td>
