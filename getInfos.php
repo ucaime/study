@@ -34,7 +34,11 @@
 require 'comon.php';
 require_once 'Snoopy.class.php';
 require_once 'login.php';
+$ctime = time();
 $sql=mysqli_query($connect,"select * from wx_type order by ctime desc");
+$zhtime = mysqli_query($connect,"select * from wx_keys order by ctime desc");
+$zhrow = mysqli_fetch_row($zhtime);
+$ktime = 100 - ($ctime-$zhrow[2])/60;
 if(isset($_POST['tijiao'])){
 $gname = $_POST['gname'];
 $gnumber = $_POST['gnumber'];
@@ -44,7 +48,6 @@ $numbers = $_POST['numbers'];
 $days = $_POST['days'];
 $gtime = strtotime($_POST['gtime']);
 $cname = $_POST['cname'];
-$ctime = time();
 $update = $_POST['update'];
 if(!$wzurl==''){
 	$sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_pinfo` 
@@ -153,6 +156,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
 key:<input type="text" name="wxkeys">
 <input type="submit" name="add" value="提交">
 </form>
+key还有:<?php echo $ktime; ?>
 <form action="getInfos.php" method="post">
 分类:<input type="text" name="types">
 提交人:<input type="text" name="uname">
