@@ -156,7 +156,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
 key:<input type="text" name="wxkeys">
 <input type="submit" name="add" value="提交">
 </form>
-key还有:<?php echo $ktime; ?>
+key还有:<?php echo $ktime; ?>分钟失效
 <form action="getInfos.php" method="post">
 分类:<input type="text" name="types">
 提交人:<input type="text" name="uname">
