@@ -7,18 +7,23 @@ for(;;){
     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
     while($row = mysqli_fetch_assoc($sql)) {
         $ntime = $row['ntime']+$row['numbers']*3600;
+        $nntime = $row['ntime'] + 18000;
         $newsql = mysqli_query($connect,"SELECT `wzurl` FROM `wx_article` WHERE `uid`='{$row['id']}' order by `ctime` desc;");
         $newrow = mysqli_fetch_row($newsql);
         $openid = $sg->get_openid($row['gname'], $row['gnumber']);
         if($openid){
             $articles = $sg->list_article($openid,$newrow[0]);
-            for($i=0;$i<count($articles);$i++){
-                $wzlist = mysqli_query($connect,"select * from wx_article where wzurl='{$articles[$i]['url']}' limit 1;");
-                if(!$wzlist){
-                    mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
+            if($articles){
+                for($i=0;$i<count($articles);$i++){
+                    $wzlist = mysqli_query($connect,"select * from wx_article where wzurl='{$articles[$i]['url']}' limit 1;");
+                    if(!mysqli_fetch_row($wzlist)){
+                        mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
+                    }
                 }
+                mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
+            }else{
+                mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$nntime' WHERE (`id`='{$row['id']}');");
             }
-            mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
         }
     }
     sleep(1);
