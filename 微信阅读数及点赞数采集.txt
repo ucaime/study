@@ -1,9 +1,10 @@
 微信阅读数及点赞数采集
-入口地址；http://st1.vmeti.com:8012/wxinfo/getInfos.php
-账号wxread：密码：read0923
-	文件:getinfos.php--后台管理程序，可以添加要采集的公账号及单个链接，更新key，添加分类，更改公众号及链接的状态
-		 update_pnumber_article.php--定时更新公众号的文章,从搜狗抓取公众号文章
-		 update_pnumber_reads.php--定时更新链接阅读数及点赞数
+	入口地址；http://st1.vmeti.com:8012/wxinfo/getInfos.php
+	排行榜地址http://st1.vmeti.com:8012/wxinfo/paihang.php
+	账号wxread：密码：read0923
+文件getinfos.php--后台管理程序，可以添加要采集的公账号及单个链接，更新key，添加分类，更改公众号及链接的状态
+	update_pnumber_article.php--定时更新公众号的文章,从搜狗抓取公众号文章
+	update_pnumber_reads.php--定时更新链接阅读数及点赞数
 
 todo：
 1、显示5个有效key,包括key值及创建时间
