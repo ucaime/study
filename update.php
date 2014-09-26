@@ -1,27 +1,29 @@
 <?php
 require_once 'Snoopy.class.php';
 require_once 'comon.php';
-for(;;){
+// for(;;){
 $time = time();
 $sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime`<=$time order by ctime desc");
-	while($re_row = mysqli_fetch_array($sql)){
+	// while($re_row = mysqli_fetch_array($sql)){
+	 $re_row = mysqli_fetch_array($sql);
 		$keysql = mysqli_query($connect,"select * from wx_keys where $time-`ctime`<7000 order by ctime asc");
 		$key = mysqli_fetch_row($keysql);
 		if($re_row && $key){
             $ntime = $re_row['ntime']+$re_row['numbers']*3600;
 			$wz = get_read($re_row['wzurl'],$key[1]);
-			if(!$wz['read']==''){
-				mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}',`wzcontent`='{$wz['content']}' where id = {$re_row['id']}");
-			}
-			mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
-			if($time-$re_row['gtime']>86400*$re_row['days']){
-				mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
-			}
-			sleep(3);
+			p($wz);
+			// if(!$wz['read']==''){
+			// 	mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}',`wzcontent`='{$wz['content']}' where id = {$re_row['id']}");
+			// }
+			// mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
+			// if($time-$re_row['gtime']>86400*$re_row['days']){
+			// 	mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
+			// }
+			// sleep(3);
 		}
-	}
+	// }
 	sleep(1);
-}
+// }
 function get_read($url='',$key,$uid=1){
 $wzurl = "{$url}&key={$key}&ascene=1&uin=Nzc5OTI2MTIx&pass_ticket=kzTtalLseTrEcwKVHswOVecGMByySYu94gRKdAXokFv2jg4UAOt%2FkrZHb0IwUlSB";
 $bsurl = "http://mp.weixin.qq.com/s?{$url}";

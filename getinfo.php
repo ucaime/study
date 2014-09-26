@@ -24,12 +24,13 @@ if($_GET['level']=="first"){
         $openid = $sg->get_openid($wxname, $weixin);
         if(!$openid) die("没有找到微信号,请使用搜狗搜索微信公众号确认微信号是否正确.");
         $articles = $sg->list_article($openid);
-        mysqli_query($connect,"INSERT INTO `wx_pinfo` (`gname`,`gnumber`,`tid`) VALUES('{$wxname}','{$weixin}','{$type}')");
-        for($i=0;$i<count($articles);$i++){
-            $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `gnumber`='$weixin';");
-            $row = mysqli_fetch_array($sql);
-            mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}')");
-        }
+        p($articles);
+        // mysqli_query($connect,"INSERT INTO `wx_pinfo` (`gname`,`gnumber`,`tid`) VALUES('{$wxname}','{$weixin}','{$type}')");
+        // for($i=0;$i<count($articles);$i++){
+        //     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `gnumber`='$weixin';");
+        //     $row = mysqli_fetch_array($sql);
+        //     mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`) VALUES('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}')");
+        // }
 
     }
     // $openid = $sg->get_openid($wxname, $weixin);
