@@ -133,7 +133,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
   </select>
   <br>
   文章url:
-  <input type="text" name="wzurl" >
+  <input type="text" name="wzurl" >选填
   <br>
   当天更新间隔:
   <input type="text" name="numbers" >单位为小时
@@ -170,10 +170,25 @@ key还有:<?php echo $ktime; ?>分钟失效
 <div style="clear:both"></div>
 <br>
 <hr>
-<div style="float:left;">
 <?php
-$gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`gtime`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc");
-$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.uctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id order by uctime desc;");
+//分页
+$page_size=20;
+$result=mysqli_query($connect,"select count(*) from wx_pinfo");
+$count_row=mysqli_fetch_row($result);
+$count=$count_row[0];
+$page_count=ceil($count/$page_size);
+$page_num_acc = $page_count;
+$init=1;
+$page_len=7;
+//判断当前页码
+if(empty($_GET['page'])||$_GET['page']<0){
+$page=1;
+}else {
+$page=$_GET['page'];
+}
+$offset=$page_size*($page-1);
+
+$gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`gtime`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset,$page_size");
 ?>
 公众号管理
 <form id="gzhgl" action="getInfos.php" method="post">
@@ -208,12 +223,56 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
     </tr>
         <?php
 }
+$page_len = ($page_len%2)?$page_len:$pagelen+1;//页码个数
+$pageoffset = ($page_len-1)/2;//页码个数左右偏移量
+
+$key='<div class="page">';
+$key.="<span>$page/$page_num_acc</span> "; //第几页,共几页
+if($page!=1){
+$key.="<a href=\"".$_SERVER['PHP_SELF']."?page=1\">第一页</a> "; //第一页
+$key.="<a href=\"".$_SERVER['PHP_SELF']."?page=".($page-1)."\">上一页</a>"; //上一页
+}else {
+$key.="第一页 ";//第一页
+$key.="上一页"; //上一页
+}
+if($page_count>$page_len){
+//如果当前页小于等于左偏移
+if($page<=$pageoffset){
+$init=1;
+$page_count = $page_len;
+}else{//如果当前页大于左偏移
+//如果当前页码右偏移超出最大分页数
+if($page+$pageoffset>=$page_count+1){
+$init = $page_count-$page_len+1;
+}else{
+//左右偏移都存在时的计算
+$init = $page-$pageoffset;
+$page_count = $page+$pageoffset;
+}
+}
+}
+for($i=$init;$i<=$page_count;$i++){
+if($i==$page){
+$key.=' <span>'.$i.'</span>';
+} else {
+$key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".$i."\">".$i."</a>";
+}
+}
+if($page!=$page_count){
+$key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".($page+1)."\">下一页</a> ";//下一页
+$key.="<a href=\"".$_SERVER['PHP_SELF']."?page={$page_num_acc}\">最后一页</a>"; //最后一页
+}else {
+$key.="下一页 ";//下一页
+$key.="最后一页"; //最后一页
+}
+$key.='</div>';
 ?>
+<tr>
+<td colspan="9" bgcolor="#E0EEE0"><?php echo $key?></td>
+</tr>
   </tbody>
 </table>
 </form>
-</div>
-<div style="float:left;">
 文章链接管理
 <form id="wzlj" action="getInfos.php" method="post">
 <input type="submit" name="urlchange" value="更改选中状态">
@@ -234,7 +293,24 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td>更新状态</td>
       <td>创建时间</td>
     </tr>
-    <?php 
+    <?php
+    //分页
+$page_size_url=20;
+$result_url=mysqli_query($connect,"select count(*) from wx_article");
+$count_row_url=mysqli_fetch_row($result_url);
+$count_url=$count_row_url[0];
+$page_count_url=ceil($count_url/$page_size_url);
+$page_num_url=$page_count_url;
+$init_url=1;
+$page_len_url=7;
+//判断当前页码
+if(empty($_GET['page_url'])||$_GET['page_url']<0){
+$page_url=1;
+}else {
+$page_url=$_GET['page_url'];
+}
+$offset_url=$page_size_url*($page_url-1);
+$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.uctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id order by uctime desc limit $offset_url,$page_size_url;");
     while($wenzhang = mysqli_fetch_array($gurl))//通过循环读取数据内容
 {
   ?>
@@ -255,10 +331,55 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
     </tr>
         <?php
 }
+$page_len_url = ($page_len_url%2)?$page_len_url:$pagelen_url+1;//页码个数
+$pageoffset_url = ($page_len_url-1)/2;//页码个数左右偏移量
+
+$key_url='<div class="page">';
+$key_url.="<span>$page_url/$page_num_url</span> "; //第几页,共几页
+if($page_url!=1){
+$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page=1\">第一页</a> "; //第一页
+$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page=".($page_url-1)."\">上一页</a>"; //上一页
+}else {
+$key_url.="第一页 ";//第一页
+$key_url.="上一页"; //上一页
+}
+if($page_count_url>$page_len_url){
+//如果当前页小于等于左偏移
+if($page_url<=$pageoffset_url){
+$init_url=1;
+$page_count_url = $page_len_url;
+}else{//如果当前页大于左偏移
+//如果当前页码右偏移超出最大分页数
+if($page_url+$pageoffset_url>=$page_count_url+1){
+$init_url = $page_count_url-$page_len_url+1;
+}else{
+//左右偏移都存在时的计算
+$init_url = $page_url-$pageoffset_url;
+$page_count_url = $page_url+$pageoffset_url;
+}
+}
+}
+for($i=$init_url;$i<=$page_count_url;$i++){
+if($i==$page_url){
+$key_url.=' <span>'.$i.'</span>';
+} else {
+$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".$i."\">".$i."</a>";
+}
+}
+if($page!=$page_count){
+$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
+$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url={$page_num_url}\">最后一页</a>"; //最后一页
+}else {
+$key_url.="下一页 ";//下一页
+$key_url.="最后一页"; //最后一页
+}
+$key_url.='</div>';
 ?>
+<tr>
+<td colspan="13" bgcolor="#E0EEE0"><?php echo $key_url?></td>
+</tr>
   </tbody>
 </table>
 </form>
-</div>
 </body>
 </html>
