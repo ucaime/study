@@ -258,7 +258,7 @@ $key.=' <span>'.$i.'</span>';
 $key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".$i."\">".$i."</a>";
 }
 }
-if($page!=$page_count){
+if($page!=$page_num_acc){
 $key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".($page+1)."\">下一页</a> ";//下一页
 $key.="<a href=\"".$_SERVER['PHP_SELF']."?page={$page_num_acc}\">最后一页</a>"; //最后一页
 }else {
@@ -366,8 +366,7 @@ $key_url.=' <span>'.$i.'</span>';
 $key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".$i."\">".$i."</a>";
 }
 }
-if($page_url!=$page_count_url){
-$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
+if($page_url!=$page_num_url){$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
 $key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url={$page_num_url}\">最后一页</a>"; //最后一页
 }else {
 $key_url.="下一页 ";//下一页
