@@ -6,8 +6,8 @@ for(;;){
     $time = time();
     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
     while($row = mysqli_fetch_assoc($sql)) {
-        $ntime = $row['ntime']+$row['numbers']*3600;
-        $nntime = $row['ntime'] + 18000;
+        $ntime = $time+$row['numbers']*3600;
+        $nntime = $time + 18000;
         $newsql = mysqli_query($connect,"SELECT `wzurl` FROM `wx_article` WHERE `uid`='{$row['id']}' order by `ctime` desc;");
         $newrow = mysqli_fetch_row($newsql);
         $openid = $sg->get_openid($row['gname'], $row['gnumber']);
@@ -96,19 +96,19 @@ class sogouwx{
     }
 
     function list_article($openid,$wzurl){
-       $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&t=".time();
+       $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page=1&t=".time();
         //echo "$url<br>";
         $snoopy = new Snoopy;
-        // $snoopy->fetch($url);
-        // $content = $snoopy->results;
-        // preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
+        $snoopy->fetch($url);
+        $content = $snoopy->results;
+        preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
         // echo $totalPages[1];die;
         $content = '';
-        for ($i=1; $i <= 2; $i++) { 
+        for ($i=1; $i <= (int)$totalPages[1]; $i++) { 
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;
-            sleep(2);
+            sleep(3);
         }
         $block = $content;
         $arts = array();

@@ -337,8 +337,8 @@ $pageoffset_url = ($page_len_url-1)/2;//页码个数左右偏移量
 $key_url='<div class="page">';
 $key_url.="<span>$page_url/$page_num_url</span> "; //第几页,共几页
 if($page_url!=1){
-$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page=1\">第一页</a> "; //第一页
-$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page=".($page_url-1)."\">上一页</a>"; //上一页
+$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url=1\">第一页</a> "; //第一页
+$key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url-1)."\">上一页</a>"; //上一页
 }else {
 $key_url.="第一页 ";//第一页
 $key_url.="上一页"; //上一页
@@ -366,7 +366,7 @@ $key_url.=' <span>'.$i.'</span>';
 $key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".$i."\">".$i."</a>";
 }
 }
-if($page!=$page_count){
+if($page_url!=$page_count_url){
 $key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
 $key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url={$page_num_url}\">最后一页</a>"; //最后一页
 }else {
