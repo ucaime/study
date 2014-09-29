@@ -57,6 +57,7 @@ class sogouwx{
                         'baijia'=>(int)str_replace(',','',$num[$i]),
                         'baidu_num'=>$baidu_num
                         );
+                sleep(1);
                 }
                 return $arr;
 
