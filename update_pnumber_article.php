@@ -6,6 +6,7 @@ for(;;){
     $time = time();
     $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
     while($row = mysqli_fetch_assoc($sql)) {
+        $time = time();
         $ntime = $time+$row['numbers']*3600;
         $nntime = $time + 18000;
         $newsql = mysqli_query($connect,"SELECT `wzurl` FROM `wx_article` WHERE `uid`='{$row['id']}' order by `ctime` desc;");

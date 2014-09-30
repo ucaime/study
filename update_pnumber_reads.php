@@ -5,6 +5,7 @@ for(;;){
 $time = time();
 $sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime`<=$time order by ctime desc");
 	while($re_row = mysqli_fetch_array($sql)){
+		$time = time();
 		$keysql = mysqli_query($connect,"select * from wx_keys where $time-`ctime`<7000 order by ctime asc");
 		$key = mysqli_fetch_row($keysql);
 		if($re_row && $key){
