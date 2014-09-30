@@ -11,7 +11,7 @@
   };
 }
 
-var put_data_url = "http://st1.vmeti.com:8012/wxinfo/getkey.php"; //ajax发送数据的url get_wx_json
+var put_data_url = "http://127.0.0.1/study/getkey.php"; //ajax发送数据的url get_wx_json
 
 var link_cgi = "https://wx.qq.com/cgi-bin/mmwebwx-bin/webwxcheckurl?uin=2997090605&sid=J833ryYvcJdYmUaX&skey=%40crypt_b2bd179_70a0ee4678aab49015be9c2838c14b60&deviceid=e241633246951974&opcode=2&requrl=http%3A%2F%2Fmp.weixin.qq.com%2Fs%3F__biz%3DMjM5MDMyOTUxNg%3D%3D%26mid%3D200661483%26idx%3D1%26sn%3D271444880d5ceebc6b38a4b1be0adc08%23rd&scene=1&username=wxid_4lxli9zpmy5w22";
 var lurl = window.location.href ;
@@ -40,10 +40,6 @@ window.onload = function() {
             $.post(put_data_url, {
                 'wxkey': wkey,
                 'keytime': keytime
-            }, function(msg) {
-                if(msg!="success"){
-                    alert("传送key失败,重新启动浏览器,重新登录微信");
-                }
             });
 
         }
