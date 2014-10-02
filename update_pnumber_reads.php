@@ -11,14 +11,14 @@ $sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime
 		if($re_row && $key){
             $ntime = $time+$re_row['numbers']*3600;
 			$wz = get_read($re_row['wzurl'],$key[1]);
-			if(!$wz['read']==''){
+			if(!$wz['read']==0){
 				mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}',`wzcontent`='{$wz['content']}' where id = {$re_row['id']}");
 			}
 			mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
 			if($time-$re_row['ctime']>86400*$re_row['days']){
 				mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
 			}
-			sleep(3);
+			sleep(5);
 		}
 	}
 	sleep(1);
@@ -37,7 +37,7 @@ preg_match('/var likeNum = \'([^<]*)\';/si', $content, $suport);
 $wz['content'] = str_replace(array("'", "\""),array("\\'","\\\""), $content);
 $wz['suport'] = (int)$suport[1];
 if($suport[1]=="赞" || $suport[1]==''){$wz['suport']=0;}else{$wz['suport'] = (int)$suport[1];}
-$wz['read']=(int)$read[1];
+if($read[1]==''){$wz['read']=0;}else{$wz['read']=(int)$read[1];}
 return $wz;
 }
 ?>

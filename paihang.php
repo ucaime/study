@@ -18,10 +18,6 @@ li{
 
 <body>
 <?php
-function th($str){
-	$title = str_replace(array("u201c","u201d","u2026","u200b","u2014"),array("“","”","...","","——"),$str);
-	return $title;
-}
 require 'comon.php';
 $time = strtotime(date('Y-m-d', time()));
 $ptime = $time - 86400;

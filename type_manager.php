@@ -175,7 +175,7 @@ $key.='</div>';
         <td colspan="2"><?php
 	if($_SESSION['grade'] == 1){
 ?><input type="submit" name="del_type" value="删除选中类别" ><?php } ?></td>
-        <td><a href="../index.php">返回</a></td>
+        <td><a href="index.php">返回</a></td>
 	</tr>
 	<tr>
         <td colspan="5" bgcolor="#E0EEE0"><?php echo $key?></td>

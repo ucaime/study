@@ -220,7 +220,7 @@ $key.='</div>';
 ?><input type="submit" name="del" value="删除选中账号"><?php
 	}
 ?></td>
-        <td><a href="../index.php">返回主页</a></td>
+        <td><a href="index.php">返回主页</a></td>
       </tr>
       <tr>
         <td colspan="9" bgcolor="#E0EEE0"><?php echo $key?></td>

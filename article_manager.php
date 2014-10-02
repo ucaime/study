@@ -153,7 +153,7 @@ $key_url.='</div>';
 ?>
 <tr bgcolor="#E0EEE0">
 <td colspan="9"><?php echo $key_url?></td>
-<td><a href="../index.php">返回</a></td>
+<td><a href="index.php">返回</a></td>
 </tr>
   </tbody>
 </table>
