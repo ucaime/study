@@ -32,7 +32,6 @@
 <body>
 <?php
 require 'comon.php';
-require_once 'Snoopy.class.php';
 require_once 'login.php';
 $ctime = time();
 $sql=mysqli_query($connect,"select * from wx_type order by ctime desc");
@@ -99,6 +98,13 @@ if(isset($_POST['urlchange'])){
   header("Location: getInfos.php");
   exit;
 }
+<<<<<<< .mine
+function th($str){
+  $title = str_replace(array("u201c","u201d","u2026","u200b","u2014","u2022"),array("“","”","...","","——","·"),$str);
+  return $title;
+}
+=======
+>>>>>>> .r34
 ?>
 <div style="float:left">
 <form action="getInfos.php" method="post">
@@ -246,7 +252,7 @@ $key.=' <span>'.$i.'</span>';
 $key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".$i."\">".$i."</a>";
 }
 }
-if($page!=$page_num_acc){
+if($page!=$page_count){
 $key.=" <a href=\"".$_SERVER['PHP_SELF']."?page=".($page+1)."\">下一页</a> ";//下一页
 $key.="<a href=\"".$_SERVER['PHP_SELF']."?page={$page_num_acc}\">最后一页</a>"; //最后一页
 }else {
@@ -354,7 +360,8 @@ $key_url.=' <span>'.$i.'</span>';
 $key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".$i."\">".$i."</a>";
 }
 }
-if($page_url!=$page_num_url){$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
+if($page_url!=$page_count_url){
+$key_url.=" <a href=\"".$_SERVER['PHP_SELF']."?page_url=".($page_url+1)."\">下一页</a> ";//下一页
 $key_url.="<a href=\"".$_SERVER['PHP_SELF']."?page_url={$page_num_url}\">最后一页</a>"; //最后一页
 }else {
 $key_url.="下一页 ";//下一页

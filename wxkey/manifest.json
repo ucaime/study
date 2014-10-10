@@ -1,0 +1,27 @@
+{
+    "name": "wxkey",
+    "version": "1.0",
+    "manifest_version": 2,
+    "description": "自动采集微信帐号key",
+    "browser_action": { 
+        "default_icon": "ico.png" ,
+        "default_title": "微信采集key"
+      } ,
+    "content_scripts": [
+      {
+        "js": [ "js/jquery.js","js/wxkey.js"],
+        "matches": [ 
+        "http://mp.weixin.qq.com/*",
+        "https://wx.qq.com/*",
+        "http://127.0.0.4/getkey.php*"],
+        "run_at": "document_end"
+      }
+    ],
+    "permissions": [
+        "tabs",
+        "activeTab",
+        "notifications",
+        "storage",
+        "http://*/"
+    ]
+}
