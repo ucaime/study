@@ -101,12 +101,12 @@ class sogouwx{
        $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&t=".time();
         //echo "$url<br>";
         $snoopy = new Snoopy;
-        // $snoopy->fetch($url);
-        // $content = $snoopy->results;
-        // preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
+        $snoopy->fetch($url);
+        $content = $snoopy->results;
+        preg_match('/totalPages\":([^<]*)\}\)/si', $content, $totalPages);
         // echo $totalPages[1];die;
         $content = '';
-        for ($i=1; $i <= 2; $i++) { 
+        for ($i=1; $i <= (int)$totalPages[1]; $i++) { 
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;
