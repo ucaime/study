@@ -66,12 +66,31 @@ if($_POST['adduser']){
 $sql = mysqli_query($connect,"select * from wx_user where `grade`=0;");
 ?>
 <form action="" id="aspnetForm1" method="post">
-<table border="1">
+<table border="1" align="center">
+  <tbody>
+    <tr bgcolor="#E0EEE0">
+        <td><a href="index.php">公众号·添加</a></td>
+      <td><a href="gzh_manager.php">公众号·查看/管理</a></td>
+      <td><a href="type_manager.php">公众号类别·查看/管理</a></td>
+      <td><a href="article_manager.php">文章·查看/管理</a></td>
+      <td><a href="paihang.php">排行</a></td>
+      <?php
+  if($_SESSION['grade'] == 1){
+?>
+      <td><a href="user_manager.php">用户·查看/管理</a></td>
+      <?php } ?>
+      <td><input type="submit" name="logout" value="退出" ></td>
+    </tr>
+   </tbody>
+</table >
+<table border="1" align="center">
 	<tbody>
-		用户名:<input type="text" name="u_name">
-		密码:<input type="password" name="u_pwd">
+    <tr>
+      <td colspan="3">用户名:<input type="text" name="u_name">
+      密码:<input type="password" name="u_pwd">
 		<input type="submit" name="adduser" value="添加用户">
-        <a href="index.php">返回</a>
+            <a href="index.php">返回</a></td>
+    </tr>
 		<tr>
 			<td></td>
 			<td>用户名称</td>

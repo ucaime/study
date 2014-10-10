@@ -1,6 +1,7 @@
 <?php
 require 'comon.php';
-$key = $_POST['wxkey'];
 $ctime = time();
-mysqli_query($connect,"UPDATE `wx_keys` SET `keys`='$key',`ctime` = '$ctime' where id = 32 ;");
+$wxkeys = $_POST['wxkey'];
+echo "success";
+$sql = mysqli_query($connect,"UPDATE `wx_reads`.`wx_keys` SET `keys`= '{$wxkeys}',`ctime`='{$ctime}' where id = 1;");
 ?>

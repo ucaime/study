@@ -61,6 +61,12 @@ if(isset($_POST['del_type'])){
   header("Location: type_manager.php");
   exit;
 }
+if(isset($_POST['logout'])){
+  $_SESSION = array();
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
 //分页
 $page_size=20;
 $result=mysqli_query($connect,"select count(*) from wx_type ");
@@ -79,6 +85,23 @@ $page=$_GET['page'];
 $offset=$page_size*($page-1);
 ?>
 <form id="gzhgl" action="" method="post">
+<table border="1" align="center">
+  <tbody>
+    <tr bgcolor="#E0EEE0">
+      <td><a href="index.php">公众号·添加</a></td>
+      <td><a href="gzh_manager.php">公众号·查看/管理</a></td>
+      <td><a href="type_manager.php">公众号类别·查看/管理</a></td>
+      <td><a href="article_manager.php">文章·查看/管理</a></td>
+      <td><a href="paihang.php">排行</a></td>
+      <?php
+  if($_SESSION['grade'] == 1){
+?>
+      <td><a href="user_manager.php">用户·查看/管理</a></td>
+      <?php } ?>
+      <td><input type="submit" name="logout" value="退出" ></td>
+    </tr>
+   </tbody>
+</table>
 <table border="1" align="center">
   <tbody>
   	<tr>

@@ -49,6 +49,12 @@ if(isset($_POST['unchange'])){
   header("Location: article_manager.php");
   exit;
 }
+if(isset($_POST['logout'])){
+  $_SESSION = array();
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
 //分页
 $page_size_url=20;
 $result_url=mysqli_query($connect,"select count(*) from wx_article");
@@ -68,6 +74,23 @@ $offset_url=$page_size_url*($page_url-1);
 $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.ctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset_url,$page_size_url;");
 ?>
 <form id="wzlj" action="" method="post">
+<table border="1" align="center">
+  <tbody>
+    <tr bgcolor="#E0EEE0">
+      <td><a href="index.php">公众号·添加</a></td>
+      <td><a href="gzh_manager.php">公众号·查看/管理</a></td>
+      <td><a href="type_manager.php">公众号类别·查看/管理</a></td>
+      <td><a href="article_manager.php">文章·查看/管理</a></td>
+      <td><a href="paihang.php">排行</a></td>
+      <?php
+  if($_SESSION['grade'] == 1){
+?>
+      <td><a href="user_manager.php">用户·查看/管理</a></td>
+      <?php } ?>
+      <td><input type="submit" name="logout" value="退出" ></td>
+    </tr>
+   </tbody>
+</table>
 <?php
 	if($_SESSION['grade'] == 1){
 ?>
@@ -102,7 +125,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td><?php echo th($wenzhang['wztitle']); ?></td>
       <td><?php echo $wenzhang['wzreads']; ?></td>
       <td><?php echo $wenzhang['wzsuports']; ?></td>
-      <td><?php states($wenzhang['state']); ?></td>
+      <td><?php urlstates($wenzhang['state']); ?></td>
       <td><?php echo date('Y-m-d H:i:s', $wenzhang['ctime']); ?></td>
     </tr>
         <?php

@@ -1,6 +1,6 @@
 <?php
 $uname='wxread';
-$pwd='wxread123';
+$pwd='read0923';
 if( $_POST['uname'] ==$uname && md5($_POST['pwd']) ==md5($pwd)  ){
     setcookie("voteadm-".$uname, 1, time()+86400);
     setcookie("voteadm-".md5($pwd), 2, time()+86400);

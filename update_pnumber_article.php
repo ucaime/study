@@ -4,8 +4,8 @@ require_once 'Snoopy.class.php';
 $sg = new sogouwx();
 for(;;){
     $time = time();
-    $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time;");
-    while($row = mysqli_fetch_assoc($sql)) {
+    $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `updates`=1 AND `ntime`<=$time order by `ctime` desc;");
+    $row = mysqli_fetch_assoc($sql);
         $time = time();
         $ntime = $time+$row['numbers']*3600;
         $nntime = $time + 18000;
@@ -18,7 +18,9 @@ for(;;){
                 for($i=0;$i<count($articles);$i++){
                     $wzlist = mysqli_query($connect,"select * from wx_article where wzurl='{$articles[$i]['url']}' limit 1;");
                     if(!mysqli_fetch_row($wzlist)){
-                        mysqli_query($connect,"INSERT INTO `wx_article` (`uid`,`wzurl`,`imgurl`,`wztitle`,`description`,`ctime`,`gtime`,`numbers`,`days`,`uctime`,`ntime`) VALUES ('{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['imgurl']}','{$articles[$i]['title']}','{$articles[$i]['description']}','{$articles[$i]['ctime']}','".time()."','{$row['numbers']}','{$row['days']}','".time()."','".time()."')");
+                        mysqli_query($connect,"INSERT INTO `wx_article` (
+                            `uid`,`wzurl`,`wztitle`,`ctime`,`gtime`,`uctime`,`ntime`) VALUES (
+                            '{$row['id']}','{$articles[$i]['url']}','{$articles[$i]['title']}','{$articles[$i]['ctime']}','".time()."','".time()."','".time()."')");
                     }
                 }
                 mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$ntime' WHERE (`id`='{$row['id']}');");
@@ -28,7 +30,6 @@ for(;;){
         }else{
             mysqli_query($connect,"UPDATE `wx_reads`.`wx_pinfo` SET `ntime`='$nntime' WHERE (`id`='{$row['id']}');");
         }
-    }
     sleep(1);
 }
 
@@ -97,7 +98,7 @@ class sogouwx{
     }
 
     function list_article($openid,$wzurl){
-       $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page=1&t=".time();
+       $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&t=".time();
         //echo "$url<br>";
         $snoopy = new Snoopy;
         $snoopy->fetch($url);
@@ -109,7 +110,7 @@ class sogouwx{
             $url=$this->UserURL."gzhjs?cb=sogou.weixin.gzhcb&openid=".$openid."&page={$i}&t=".time();
             $snoopy->fetch($url);
             $content = $content.$snoopy->results;
-            sleep(3);
+            sleep(2);
         }
         $block = $content;
         $arts = array();

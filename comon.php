@@ -30,11 +30,11 @@ function th($str){
   return $title;
 }
 function states($num){
-  if($num==0){echo "更新中";}
-  if($num==1){echo "未更新";}
-}
-function urlstates($num){
   if($num==1){echo "更新中";}
   if($num==0){echo "未更新";}
+}
+function urlstates($num){
+  if($num==0){echo "更新中";}
+  if($num==1){echo "未更新";}
 }
 ?>

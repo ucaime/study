@@ -48,17 +48,17 @@ $wzurl = $_POST['wzurl'];
 $numbers = $_POST['numbers'];
 $days = $_POST['days'];
 $gtime = strtotime($_POST['gtime']);
-$cname = $_POST['cname'];
+$cname = $_SESSION['wx_uname'];
 $update = $_POST['update'];
 if(!$wzurl==''){
 	$sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_pinfo` 
-(`tid`, `gname`, `gnumber`, `wzurl`, `ctime`, `cname`, `days`, `gtime`,`ntime`, `numbers`) VALUES 
-('$type', '$gname', '$gnumber','$wzurl', '$ctime', '$cname', '$days',$gtime, '$gtime', '$numbers');") or die("失败");
+(`tid`, `gname`, `gnumber`, `wzurl`, `ctime`, `cname`, `gtime`,`ntime`) VALUES 
+('$type', '$gname', '$gnumber','$wzurl', '$ctime', '$cname',$ctime, '$ctime');") or die("失败");
 $sql=mysqli_query($connect,"select `id` from `wx_pinfo` where `gnumber` = '$gnumber';");
 $id = mysqli_fetch_row($sql);
 $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_article` 
-(`uid`, `wzurl`, `imgurl`, `wztitle`, `wzcontent`, `description`, `wzreads`, `wzsuports`, `ctime`, `gtime`, `ntime`,`numbers`, `days`, `state`, `uctime`) VALUES 
-('$id[0]', '$wzurl', '', '', NULL, '', '0', '0', '$ctime', '$gtime','$gtime', '$numbers', '$days', '0', '$ctime');") or die("失败");
+(`uid`, `wzurl`, `imgurl`, `wztitle`, `wzcontent`, `description`, `wzreads`, `wzsuports`, `ctime`, `gtime`, `ntime`, `uctime`) VALUES 
+('$id[0]', '$wzurl', '', '', NULL, '', '0', '0', '$ctime', '$ctime','$ctime', '$ctime');") or die("失败");
 }else{
   $sql = mysqli_query($connect,"SELECT * FROM `wx_pinfo` WHERE `gnumber`='$gnumber';");
     $row = mysqli_fetch_array($sql);
@@ -66,8 +66,8 @@ $sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_article`
         echo "该公众号已经收录,文章会定期更新.";
     }else{
 	$sql = mysqli_query($connect,"INSERT INTO `wx_reads`.`wx_pinfo` 
-(`tid`, `gname`, `gnumber`, `ctime`, `cname`, `days`, `ntime`,`gtime`, `numbers`,`updates`) VALUES 
-('$type', '$gname', '$gnumber', '$ctime', '$cname', '$days', '$gtime','$gtime', '$numbers','$update');") or die("失败");
+(`tid`, `gname`, `gnumber`, `ctime`, `cname`,`ntime`,`gtime`) VALUES 
+('$type', '$gname', '$gnumber', '$ctime', '$cname', '$ctime','$ctime');") or die("失败");
 }}
 header("Location: index.php");
 }
@@ -77,9 +77,11 @@ header("Location: index.php");
 <table border="1" align="center">
   <tbody>
   	<tr bgcolor="#E0EEE0">
+      <td><a href="index.php">公众号·添加</a></td>
       <td><a href="gzh_manager.php">公众号·查看/管理</a></td>
       <td><a href="type_manager.php">公众号类别·查看/管理</a></td>
       <td><a href="article_manager.php">文章·查看/管理</a></td>
+      <td><a href="paihang.php">排行</a></td>
       <?php
 	if($_SESSION['grade'] == 1){
 ?>
@@ -125,7 +127,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
       <td><input type="text" name="wzurl" ></td>
       <td>选填，作为指定更新文章</td>
     </tr>
-    <tr>
+<!--     <tr>
       <td>更新间隔</td>
       <td><input type="text" name="numbers" ></td>
       <td>单位为小时 </td>
@@ -149,7 +151,7 @@ while($re_row = mysqli_fetch_array($sql))//通过循环读取数据内容
       <td>创建人</td>
       <td><input type="text" name="cname" ></td>
       <td>值</td>
-    </tr>
+    </tr> -->
     <tr>
       <td colspan="3" align="right"><input type="reset" name="reset" value="重置"><input type="submit" name="tijiao" value="提交"></td>
     </tr>
