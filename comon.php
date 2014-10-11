@@ -37,11 +37,8 @@ function urlstates($num){
   if($num==0){echo "更新中";}
   if($num==1){echo "未更新";}
 }
-<<<<<<< .mine
-=======
 function urlsocket($num){
   if($num==0){echo "显示";}
   if($num==1){echo "不显示";}
 }
->>>>>>> .r38
 ?>
