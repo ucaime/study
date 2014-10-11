@@ -39,13 +39,13 @@ if(!isset($_SESSION['wx_uname'])){
 require 'comon.php';
 if(isset($_POST['change'])){
   $ID_gzh= implode(",",$_POST['wz']);
-  mysqli_query($connect,"UPDATE `wx_article` SET `state`=0 where `id` in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE `wx_article` SET `socket`=0 where `id` in ($ID_gzh)");
   header("Location: article_manager.php");
   exit;
 }
 if(isset($_POST['unchange'])){
   $ID_gzh= implode(",",$_POST['wz']);
-  mysqli_query($connect,"UPDATE `wx_article` SET `state`=1 where `id` in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE `wx_article` SET `socket`=1 where `id` in ($ID_gzh)");
   header("Location: article_manager.php");
   exit;
 }
@@ -71,7 +71,7 @@ $page_url=1;
 $page_url=$_GET['page_url'];
 }
 $offset_url=$page_size_url*($page_url-1);
-$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.ctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset_url,$page_size_url;");
+$gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`socket`,c.`gtime`,c.`numbers`,c.`days`,c.state,c.ctime from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset_url,$page_size_url;");
 ?>
 <form id="wzlj" action="" method="post">
 <table border="1" align="center">
@@ -94,7 +94,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
 <?php
 	if($_SESSION['grade'] == 1){
 ?>
-<input type="submit" name="change" value="更新选中账号"><input type="submit" name="unchange" value="不更新选中账号">
+<input type="submit" name="change" value="选中文章排行中显示"><input type="submit" name="unchange" value="选中文章排行中不显示">
 <?php
 	}
 ?>
@@ -110,6 +110,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td>阅读数</td>
       <td>点赞数</td>
       <td>更新状态</td>
+      <td>排行</td>
       <td>创建时间</td>
     </tr>
 <?php
@@ -126,6 +127,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td><?php echo $wenzhang['wzreads']; ?></td>
       <td><?php echo $wenzhang['wzsuports']; ?></td>
       <td><?php urlstates($wenzhang['state']); ?></td>
+      <td><?php urlsocket($wenzhang['socket']); ?></td>
       <td><?php echo date('Y-m-d H:i:s', $wenzhang['ctime']); ?></td>
     </tr>
         <?php
@@ -176,7 +178,7 @@ $key_url.='</div>';
 ?>
 <tr bgcolor="#E0EEE0">
 <td colspan="9"><?php echo $key_url?></td>
-<td><a href="index.php">返回</a></td>
+<td><a href="../index.php">返回</a></td>
 </tr>
   </tbody>
 </table>

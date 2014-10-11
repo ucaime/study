@@ -4,6 +4,7 @@
 <head>
 <meta charset="utf-8">
 <title>排行</title>
+<script language="javascript" type="text/javascript" src="My97DatePicker/WdatePicker.js"></script>
 <style>
 ul{
 	width:600px;
@@ -22,15 +23,12 @@ li{
 
 <body>
 <?php
-<<<<<<< .mine
 if(isset($_POST['logout'])){
   $_SESSION = array();
     session_destroy();
     header("Location: index.php");
     exit;
 }
-=======
->>>>>>> .r34
 ?>
 <?php
 if(!isset($_SESSION['wx_uname'])){
@@ -38,8 +36,17 @@ if(!isset($_SESSION['wx_uname'])){
   exit ;
 }
 require 'comon.php';
-$time = strtotime(date('Y-m-d', time()));
-$ptime = $time - 86400;
+require 'libs/Smarty.class.php';
+$smarty = new Smarty;
+//实例化Smarty和配置Smarty属性  
+$smarty = new Smarty();    //实例化Smarty对象  
+$smarty->template_dir = "templates";    //模板文件的目录  
+$smarty->compile_dir = "templates_c";    //编译的模板文件  
+$smarty->config_dir = "configs";        //配置文件目录  
+$smarty->cache_dir = "cache";           //缓存的所有文件  
+$smarty->caching = false;
+$smarty->left_delimiter = "<{";  
+$smarty->right_delimiter = "}>";
 $type = mysqli_query($connect,"select * from wx_type;");
 ?>
 <form id="gzhgl" action="" method="post">
@@ -58,12 +65,21 @@ $type = mysqli_query($connect,"select * from wx_type;");
       <?php } ?>
       <td><input type="submit" name="logout" value="退出" ></td>
     </tr>
+    <tr><td colspan="5"><input class="Wdate" type="text" onClick="WdatePicker()" name="dates"></td><td><input type="submit" name="chaxun" value="查看"></td><td><input type="submit" name="create" value="生成页面"></td></tr>
    </tbody>
 </table>
 </form>
 <?php
+if(isset($_POST['chaxun'])){
+  $ptime = strtotime($_POST['dates']);
+  $ntime = $ptime + 86400;
+  ?>
+  <h2 align="center"><?php echo $_POST['dates'];?>排行</h2>
+<?php
+$j=1;
 while($type_row = mysqli_fetch_array($type))//通过循环读取数据内容
 {
+  $rarray[$j]['type_name']= $type_row['wx_type'];
 ?>
 <table border="1" align="center">
   <tbody>
@@ -79,10 +95,11 @@ while($type_row = mysqli_fetch_array($type))//通过循环读取数据内容
       <td>点赞</td>
       <td>点赞率</td>
     </tr>
-    <?php 
-$wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`ctime` from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$time group by wztitle,uid order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
+    <?php
+$wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`ctime` from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime and socket=0 order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
 $i=1;
-while($wz_row = mysqli_fetch_array($wz)){
+while($wz_row = mysqli_fetch_assoc($wz)){
+  $rarray[$j]['lists'][$i] = $wz_row;
   if($i%2){
 ?>
     <tr bgcolor="#DBEDF4">
@@ -107,10 +124,37 @@ while($wz_row = mysqli_fetch_array($wz)){
 <?php
     }
   $i++;
-} ?>
+  } 
+$j++;
+?>
   </tbody>
 </table>
 <br>
-<?php } ?>
+<?php
+  }
+}
+if(isset($_POST['create'])){
+  $ptime = strtotime($_POST['dates']);
+  $ntime = $ptime + 86400;
+  $j=1;
+  while($type_row = mysqli_fetch_array($type)){
+    $rarray[$j]['type_name']= $type_row['wx_type'];
+    $wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`ctime` from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime and socket=0 order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
+    $i=1;
+    while($wz_row = mysqli_fetch_assoc($wz)){
+      $rarray[$j]['lists'][$i] = $wz_row;
+      $i++;
+      } 
+    $j++;
+  }
+echo "<pre>";
+print_r($rarray);
+echo "</pre>";
+$smarty->assign("dates",$_POST['dates']);
+$smarty->assign("contect", $rarray);  
+$contect = $smarty->fetch("index.tpl");  
+file_put_contents("paihang.html", $contect);
+}
+?>
 </body>
 </html>

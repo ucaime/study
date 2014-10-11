@@ -86,6 +86,14 @@ if(isset($_POST['typesadd'])){
 ('$types', '$ctime','$uname');") or die("失败");
   header("Location: getInfos.php");
 }
+function states($num){
+  if($num==0){echo "更新中";}
+  if($num==1){echo "未更新";}
+}
+function urlstates($num){
+  if($num==1){echo "更新中";}
+  if($num==0){echo "未更新";}
+}
 if(isset($_POST['gzhchange'])){
   $ID_gzh= implode(",",$_POST['gzh']);
   mysqli_query($connect,"UPDATE wx_pinfo SET updates=0 where id in ($ID_gzh)");
@@ -98,13 +106,10 @@ if(isset($_POST['urlchange'])){
   header("Location: getInfos.php");
   exit;
 }
-<<<<<<< .mine
 function th($str){
   $title = str_replace(array("u201c","u201d","u2026","u200b","u2014","u2022"),array("“","”","...","","——","·"),$str);
   return $title;
 }
-=======
->>>>>>> .r34
 ?>
 <div style="float:left">
 <form action="getInfos.php" method="post">
