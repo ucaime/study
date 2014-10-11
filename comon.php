@@ -10,10 +10,10 @@ function p($arr){
 function arr_type($row='',$type_cur=''){
 	$type_html = "";
 	foreach($row as $key=>$k){
-		if($k[1] == $type_cur){
-			$type_html = $type_html."<option selected='selected' value={$k[1]}>{$k[1]}</option>";
+		if($k[2] == $type_cur){
+			$type_html = $type_html."<option selected='selected' value={$k[2]}>{$k[2]}</option>";
 			}else{
-				$type_html = $type_html."<option value={$k[1]}>{$k[1]}</option>";
+				$type_html = $type_html."<option value={$k[2]}>{$k[2]}</option>";
 			}
 		}
 	return $type_html;
@@ -37,8 +37,11 @@ function urlstates($num){
   if($num==0){echo "更新中";}
   if($num==1){echo "未更新";}
 }
+<<<<<<< .mine
+=======
 function urlsocket($num){
   if($num==0){echo "显示";}
   if($num==1){echo "不显示";}
 }
+>>>>>>> .r38
 ?>

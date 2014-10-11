@@ -5,17 +5,20 @@ for(;;){
 $time = time();
 $sql=mysqli_query($connect,"select * from wx_article where `state`= 0 and `ntime`<=$time order by ctime desc");
 	while($re_row = mysqli_fetch_array($sql)){
+		$time = time();
 		$keysql = mysqli_query($connect,"select * from wx_keys where $time-`ctime`<7000 order by ctime asc");
 		$key = mysqli_fetch_row($keysql);
 		if($re_row && $key){
-            $ntime = $re_row['ntime']+$re_row['numbers']*3600;
+            $ntime = $time+$re_row['numbers']*3600;
 			$wz = get_read($re_row['wzurl'],$key[1]);
-			mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}',`wzcontent`='{$wz['content']}' where id = {$re_row['id']}");
+			if(!$wz['read']==0){
+				mysqli_query($connect,"UPDATE wx_article SET `wzreads`='{$wz['read']}',`wzsuports`='{$wz['suport']}',`wzcontent`='{$wz['content']}' where id = {$re_row['id']}");
+			}
 			mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `ntime`='$ntime' WHERE (`id`='{$re_row['id']}');");
-			if($time-$re_row['gtime']>86400*$re_row['days']){
+			if($time-$re_row['ctime']>86400*$re_row['days']){
 				mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `state`=1 WHERE (`id`='{$re_row['id']}');");
 			}
-			sleep(3);
+			sleep(5);
 		}
 	}
 	sleep(1);
@@ -30,13 +33,9 @@ $snoopy->fetch($wzurl); //获取所有内容
 $content = $snoopy->results; //显示结果
 preg_match('/<span id="readNum">([^<]*)<\/span>/si', $content, $read);
 preg_match('/var likeNum = \'([^<]*)\';/si', $content, $suport);
-$content =  htmlspecialchars($content,ENT_QUOTES);
-preg_match('/&lt;div id=&quot;page-content&quot;&gt;([^<]*)&lt;div id=&quot;js_pc_qr_code&quot; class=&quot;qr_code_pc_outer&quot;&gt;/si', $content, $contents);
-// $contents =  htmlspecialchars_decode($contents[1],ENT_QUOTES);
-// echo $contents;die;
-// $content = htmlspecialchars($content);
-// $wz['content'] = str_replace(array("'", "\""),array("\\'","\\\""), $contents[1]);
-$wz['content'] = $contents[1];
+// $wz['content'] = htmlspecialchars($content,ENT_QUOTES);
+$wz['content'] = str_replace(array("'", "\""),array("\\'","\\\""), $content);
+$wz['suport'] = (int)$suport[1];
 if($suport[1]=="赞" || $suport[1]==''){$wz['suport']=0;}else{$wz['suport'] = (int)$suport[1];}
 if($read[1]==''){$wz['read']=0;}else{$wz['read']=(int)$read[1];}
 return $wz;

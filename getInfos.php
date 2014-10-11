@@ -217,7 +217,7 @@ $gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`g
       <td><?php echo $re_row['gnumber']; ?></td>
       <td><?php echo date('Y-m-d', $re_row['gtime']); ?></td>
       <td><?php echo $re_row['numbers']; ?></td>
-      <td><?php urlstates($re_row['updates']); ?></td>
+      <td><?php states($re_row['updates']); ?></td>
       <td><?php echo date('Y-m-d', $re_row['ctime']); ?></td>
     </tr>
         <?php
@@ -325,7 +325,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td><?php echo date('Y-m-d', $wenzhang['gtime']); ?></td>
       <td><?php echo $wenzhang['numbers']; ?></td>
       <td><?php echo $wenzhang['days']; ?></td>
-      <td><?php states($wenzhang['state']); ?></td>
+      <td><?php urlstates($wenzhang['state']); ?></td>
       <td><?php echo date('Y-m-d H:i:s', $wenzhang['uctime']); ?></td>
     </tr>
         <?php
