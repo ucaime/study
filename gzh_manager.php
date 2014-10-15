@@ -45,13 +45,27 @@ while($type_row = mysqli_fetch_array($sql)){
 }
 if(isset($_POST['change'])){
   $ID_gzh= implode(",",$_POST['gzh']);
-  mysqli_query($connect,"UPDATE wx_pinfo SET updates=0 where id in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE wx_pinfo SET updates=1 where id in ($ID_gzh)");
   header("Location: gzh_manager.php");
   exit;
 }
 if(isset($_POST['unchange'])){
   $ID_gzh= implode(",",$_POST['gzh']);
-  mysqli_query($connect,"UPDATE wx_pinfo SET updates=1 where id in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE wx_pinfo SET updates=0 where id in ($ID_gzh)");
+  header("Location: gzh_manager.php");
+  exit;
+}
+if(isset($_POST['pchange'])){
+  $ID_gzh= implode(",",$_POST['gzh']);
+  mysqli_query($connect,"UPDATE wx_pinfo SET `socket`=0 where `id` in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE wx_article SET `socket`=0 where `uid` in ($ID_gzh)");
+  header("Location: gzh_manager.php");
+  exit;
+}
+if(isset($_POST['punchange'])){
+  $ID_gzh= implode(",",$_POST['gzh']);
+  mysqli_query($connect,"UPDATE wx_pinfo SET `socket`=1 where `id` in ($ID_gzh)");
+  mysqli_query($connect,"UPDATE wx_article SET `socket`=1 where `uid` in ($ID_gzh)");
   header("Location: gzh_manager.php");
   exit;
 }
@@ -113,6 +127,17 @@ $offset=$page_size*($page-1);
     </tr>
    </tbody>
 </table>
+
+<select name="typel">
+<?php 
+$sqll=mysqli_query($connect,"select * from wx_type order by ctime desc");
+while($type_rows = mysqli_fetch_array($sqll)) {
+?>
+<option value="<?php echo $type_rows['id']; ?>"><?php echo $type_rows['wx_type']; ?></option>
+<?php } ?>
+</select>
+<input type="submit" name="ptype" value="查看">
+
   <table border="1" align="center">
     <tbody>
       <tr>
@@ -126,13 +151,15 @@ $offset=$page_size*($page-1);
         <td>更新状态</td>
         <td>创建时间</td>
         <td>创建人</td>
+        <td>排行</td>
       </tr>
 <?php 
 if(isset($_POST['search'])){
 	$wxnumber = $_POST['wxnumber'];
-	$list = search_row('wx_pinfo','gnumber',$wxnumber);
-	$t_resurt = mysqli_query($connect,"select * from wx_type where id = {$list['tid']}");
-	$t_row = mysqli_fetch_assoc($t_resurt);
+  $results = mysqli_query($connect,"select * from `wx_pinfo` where `gnumber` = '{$wxnumber}' || `gname` = '{$wxnumber}';");
+  while($list = mysqli_fetch_array($results)){
+    $t_resurt = mysqli_query($connect,"select * from wx_type where id = {$list['tid']}");
+    $t_row = mysqli_fetch_assoc($t_resurt);
 ?>	
 	<tr bgcolor="#B5B3A9">
           <td><?php if($t_row){echo "找到";}else{echo "未找到";} ?><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $list['id'] ?>"/></td>
@@ -144,10 +171,51 @@ if(isset($_POST['search'])){
         <td><?php states($list['updates']); ?></td>
         <td><?php echo date('Y-m-d H:i:s', $list['ctime']); ?></td>
         <td><?php echo $list['cname']; ?></td>
+        <td><?php urlsocket($list['socket']); ?></td>
       </tr>
 <?php
 }
-$gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`cname`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset,$page_size");
+}
+elseif (isset($_POST['ptype'])) {
+$gzh=mysqli_query($connect,"select a.`tid`,a.`id`,a.socket,b.`wx_type`,a.`gname`,a.`gnumber`,a.`cname`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id where a.tid = {$_POST['typel']} order by ctime desc");
+while($re_row = mysqli_fetch_array($gzh)){
+  //通过循环读取数据内容
+  if($re_row['id']%2){
+?>
+      <tr bgcolor="#E0EEE0">
+        <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['id'] ?>"/></td>
+        <td><?php echo $re_row['id']; ?></td>
+        <td><select style="width:155px" name="<?php echo $re_row['id'] ?>"><?php echo arr_type($type_result,$re_row['wx_type']); ?></select></td>
+        <td><?php echo $re_row['gname']; ?></td>
+        <td><?php echo $re_row['gnumber']; ?></td>
+        <td><?php echo $re_row['numbers']; ?></td>
+        <td><?php states($re_row['updates']); ?></td>
+        <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
+        <td><?php echo $re_row['cname']; ?></td>
+        <td><?php urlsocket($re_row['socket']); ?></td>
+      </tr>
+      <?php
+  }else{
+    ?>
+        <tr>
+        <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['id'] ?>"/></td>
+        <td><?php echo $re_row['id']; ?></td>
+        <td><select style="width:155px" name="<?php echo $re_row['id'] ?>"><?php echo arr_type($type_result,$re_row['wx_type']); ?></select></td>
+        <td><?php echo $re_row['gname']; ?></td>
+        <td><?php echo $re_row['gnumber']; ?></td>
+        <td><?php echo $re_row['numbers']; ?></td>
+        <td><?php states($re_row['updates']); ?></td>
+        <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
+        <td><?php echo $re_row['cname']; ?></td>
+        <td><?php urlsocket($re_row['socket']); ?></td>
+      </tr>
+        <?php
+    }
+}
+
+}
+else{
+$gzh=mysqli_query($connect,"select a.`id`,a.socket,b.`wx_type`,a.`gname`,a.`gnumber`,a.`cname`,a.`numbers`,a.`state`,a.`ctime`,a.`updates` from wx_pinfo AS a LEFT JOIN wx_type AS b on a.tid=b.id order by ctime desc limit $offset,$page_size");
 while($re_row = mysqli_fetch_array($gzh)){
 	//通过循环读取数据内容
 	if($re_row['id']%2){
@@ -162,6 +230,7 @@ while($re_row = mysqli_fetch_array($gzh)){
         <td><?php states($re_row['updates']); ?></td>
         <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
         <td><?php echo $re_row['cname']; ?></td>
+        <td><?php urlsocket($re_row['socket']); ?></td>
       </tr>
       <?php
 	}else{
@@ -176,9 +245,11 @@ while($re_row = mysqli_fetch_array($gzh)){
         <td><?php states($re_row['updates']); ?></td>
         <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
         <td><?php echo $re_row['cname']; ?></td>
+        <td><?php urlsocket($re_row['socket']); ?></td>
       </tr>
         <?php
 		}
+}
 }
 $page_len = ($page_len%2)?$page_len:$pagelen+1;//页码个数
 $pageoffset = ($page_len-1)/2;//页码个数左右偏移量
@@ -225,15 +296,24 @@ $key.="最后一页"; //最后一页
 $key.='</div>';
 ?>
       <tr>
-        <td colspan="6"><?php
+        <?php
 	if($_SESSION['grade'] == 1){
-?><input type="submit" name="change" value="更新选中账号"><input type="submit" name="unchange" value="不更新选中账号">
-        
-        <input type="text" name="wxnumber"><input type="submit" name="search" value="搜索微信号">
+    ?>
+    <td colspan=4>
+      <input type="text" name="wxnumber">
+      <input type="submit" name="search" value="搜索微信号"></td>
+    <td>
+      <input type="submit" name="pchange" value="排行显示"></td>
+    <td>
+      <input type="submit" name="punchange" value="排行不显示"></td>
+    <td>
+      <input type="submit" name="change" value="更新选中账号"></td>
+    <td>
+      <input type="submit" name="unchange" value="不更新选中账号"></td>
         <?php
 	}
-?></td>
-        <td><?php
+?>
+<td><?php
 	if($_SESSION['grade'] == 1){
 ?><input type="submit" name="type_change" value="更改选中类别"><?php
 	}
@@ -243,10 +323,9 @@ $key.='</div>';
 ?><input type="submit" name="del" value="删除选中账号"><?php
 	}
 ?></td>
-        <td><a href="index.php">返回主页</a></td>
       </tr>
       <tr>
-        <td colspan="9" bgcolor="#E0EEE0"><?php echo $key?></td>
+        <td colspan="10" bgcolor="#E0EEE0"><?php echo $key?></td>
       </tr>
     </tbody>
   </table>

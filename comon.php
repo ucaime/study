@@ -18,11 +18,11 @@ function arr_type($row='',$type_cur=''){
 		}
 	return $type_html;
 }
-function search_row($biao,$ziduan,$value){
+function search_row($biao,$ziduan1,$ziduan2,$value){
 	$connect = mysqli_connect("127.0.0.1", "root", "root") or die("链接数据库失败！");
 	mysqli_select_db($connect,"wx_reads" ) or die("选择数据库失败");
 	mysqli_query($connect,"SET NAMES 'utf8'");
-	$result = mysqli_query($connect,"select * from `{$biao}` where `{$ziduan}` = '{$value}';");
+	$result = mysqli_query($connect,"select * from `{$biao}` where `{$ziduan1}` = '{$value}' || `{$ziduan2}` = '{$value}';");
 	return mysqli_fetch_array($result);
 }
 function th($str){
