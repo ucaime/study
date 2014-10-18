@@ -28,13 +28,18 @@ $snoopy = new Snoopy;
 $snoopy->agent = "Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_0 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7A341 Safari/528.16"; //伪装浏览器
 $snoopy->fetch($wzurl); //获取所有内容
 $content = $snoopy->results; //显示结果
-preg_match('/"read_num":"([^<]*)"\*1,/si', $content, $read);
-preg_match('/"like_num":"([^<]*)"\*1,/si', $content, $suport);
+if(preg_match('/"read_num":"([^<]*)"\*1,/si', $content, $read)){
+	$wz['read']=(int)$read[1];
+}else{
+	$wz['read']='';
+}
+if(preg_match('/"like_num":"([^<]*)"\*1/si', $content, $suport)){
+	$wz['suport'] = (int)$suport[1];
+}else{
+	$wz['suport']='';
+}
 // $content = htmlspecialchars($content);
 // $wz['content'] = str_replace(array("'", "\""),array("\\'","\\\""), $content);
-$wz['suport'] = (int)$suport[1];
-if($suport[1]=="赞" || $suport[1]==''){$wz['suport']=0;}else{$wz['suport'] = (int)$suport[1];}
-$wz['read']=(int)$read[1];
 return $wz;
 }
 ?>

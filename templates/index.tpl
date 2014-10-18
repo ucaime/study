@@ -2,11 +2,11 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title><{if $week eq 1}>微信公众号文章周排行-<{date("m月d日",$datesp)}>-<{date("m月d日",$datesn)}><{else}>微信公众号文章排行榜-<{date("Y年m月d日",strtotime($dates))}><{/if}></title>
+<title><{if $week eq 1}>微信文章周排行-<{date("m月d日",$datesp)}>-<{date("m月d日",$datesn)}><{else}>微信文章排行榜-<{date("Y年m月d日",strtotime($dates))}><{/if}></title>
 <style>
 
 body {
-    width: 700px;
+    width: 900px;
     margin: 40px auto;
     font-family: 'trebuchet MS', 'Lucida sans', Arial;
     font-size: 14px;
@@ -99,13 +99,13 @@ table {
 </head>
 
 <body>
-<h2><{if $week eq 1}>微信公众号文章周排行-<{date("m月d日",$datesp)}>-<{date("m月d日",$datesn)}><{else}>微信公众号文章排行榜-<{date("Y年m月d日",strtotime($dates))}><{/if}></h2>
+<h2><{if $week eq 1}>微信文章周排行-<{date("m月d日",$datesp)}>-<{date("m月d日",$datesn)}><{else}>微信文章排行榜-<{date("Y年m月d日",strtotime($dates))}><{/if}></h2>
 <{section name=arr loop=$contect}>
 	<table class="bordered">
 		<tbody>
 			<tr bgcolor="#308598" style="font-size: 23px;">
 				<td colspan="2" class="title"><{$contect[arr].type_name}></td>
-				<td colspan="4"></td>
+				<td colspan="5"></td>
 			</tr>
 			<tr bgcolor="#308598">
 				<td>排名</td>
@@ -113,7 +113,8 @@ table {
 				<td>文章标题</td>
 				<td>阅读</td>
 				<td>点赞</td>
-				<td>点赞率</td>
+				<td>更新频次</td>
+                <td>综合排名</td>
 			</tr>
 			<{foreach from=$contect[arr].lists key=k item=v}>
 			<{if $k%2 eq 0}>
@@ -123,7 +124,8 @@ table {
 				<td><a href="<{$v.wzurl}>" target='_blank'><{$v.wztitle}></a></td>
 				<td><{$v.wzreads}></td>
 				<td><{$v.wzsuports}></td>
-				<td><{floor($v.wzsuports/$v.wzreads*10000)/10000*100}>%</td>
+				<td><{$v.pinci}></td>
+                <td><{$v.totals}></td>
 			</tr>
 			<{elseif $k%2 neq 0}>
 			<tr bgcolor="#B6DDE9">
@@ -132,7 +134,8 @@ table {
 				<td><a href="<{$v.wzurl}>" target='_blank'><{$v.wztitle}></a></td>
 				<td><{$v.wzreads}></td>
 				<td><{$v.wzsuports}></td>
-				<td><{floor($v.wzsuports/$v.wzreads*10000)/10000*100}>%</td>
+				<td><{$v.pinci}></td>
+                <td><{$v.totals}></td>
 			</tr>
 			<{else}>
 			<{/if}>

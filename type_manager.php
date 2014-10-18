@@ -108,8 +108,7 @@ $offset=$page_size*($page-1);
       <td colspan="5"><?php
 	if($_SESSION['grade'] == 1){
 ?>
-      总类别名称:<input type="text" name="ztype_name" >
-      分类别名称:<input type="text" name="type_name" >
+      类别名称:<input type="text" name="type_name" >
       创建人:<input type="text" name="cname">
       <input type="submit" name="add_type" value="添加类别">
       <?php } ?>
@@ -123,15 +122,15 @@ $offset=$page_size*($page-1);
       <td>创建时间</td>
     </tr>
     <?php
-	$sql=mysqli_query($connect,"select f.id as fid,f.wx_type,f.cname,f.ctime,z.id as zid,z.wx_ztype from wx_type as f left join wx_ztype as z on f.zid = z.id order by f.ctime desc limit $offset,$page_size;");
+	$sql=mysqli_query($connect,"select * from wx_type order by ctime desc limit $offset,$page_size;");
     while($re_row = mysqli_fetch_array($sql)){
 	//通过循环读取数据内容
-		if($re_row['fid']%2){
+		if($re_row['id']%2){
 ?>
 	<tr bgcolor="#D5CBCB">
-      <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['fid'] ?>"/></td>
-      <td><?php echo $re_row['fid']; ?></td>
-      <td><input type="text" name="<?php echo $re_row['zid']; ?>" value="<?php echo $re_row['wx_ztype']; ?>"><input type="text" name="<?php echo $re_row['fid']; ?>" value="<?php echo $re_row['wx_type']; ?>"></td>
+      <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['id'] ?>"/></td>
+      <td><?php echo $re_row['id']; ?></td>
+      <td><input type="text" name="<?php echo $re_row['id']; ?>" value="<?php echo $re_row['wx_type']; ?>"></td>
       <td><?php echo $re_row['cname']; ?></td>
       <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
     </tr>
@@ -139,9 +138,9 @@ $offset=$page_size*($page-1);
     	}else{
 			?>
 			<tr>
-      <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['fid'] ?>"/></td>
-      <td><?php echo $re_row['fid']; ?></td>
-      <td><input type="text" name="<?php echo $re_row['zid']; ?>" value="<?php echo $re_row['wx_ztype']; ?>"><input type="text" name="<?php echo $re_row['fid']; ?>" value="<?php echo $re_row['wx_type']; ?>"></td>
+      <td><input name="gzh[]" type="checkbox" id="gzh[]" value="<?php echo $re_row['id'] ?>"/></td>
+      <td><?php echo $re_row['id']; ?></td>
+      <td><input type="text" name="<?php echo $re_row['id']; ?>" value="<?php echo $re_row['wx_type']; ?>"></td>
       <td><?php echo $re_row['cname']; ?></td>
       <td><?php echo date('Y-m-d H:i:s', $re_row['ctime']); ?></td>
     </tr>

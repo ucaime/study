@@ -124,7 +124,7 @@ if(isset($_POST['chaxun'])){
   $r3=$_POST['r3'];
   $ptime = strtotime($_POST['dates']);
   $ntime = $ptime + 86400;
-  $stime = strtotime(date("Ymd",strtotime('-7 day')));
+  $stime = strtotime(date("Ymd",strtotime('-7 day',$ptime)));
   ?>
   <h2 align="center"><?php echo $_POST['dates'];?>排行</h2>
 <?php
@@ -152,12 +152,13 @@ while($type_row = mysqli_fetch_array($type))//通过循环读取数据内容
       <td>排行</td>
     </tr>
     <?php
-$wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`ctime`,c.id,c.uid,c.socket,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
+$wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`ctime`,c.id,c.uid,c.socket,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime order by c.totals desc, c.wzreads desc,c.wzsuports desc;");
 $i=1;
 while($wz_row = mysqli_fetch_assoc($wz)){
-$pinsql = mysqli_query($connect,"select count(*) from wx_article where uid ={$wz_row['uid']} and ctime>$stime and ctime<$ntime group by from_unixtime(ctime,'%Y-%m-%d');");
+$pinsql = mysqli_query($connect,"select count(*) from wx_article where uid ={$wz_row['uid']} and ctime>$stime and ctime<$ptime group by from_unixtime(ctime,'%Y-%m-%d');");
 $pinci = mysqli_num_rows($pinsql);
 $totals = round($r1*($wz_row['wzreads']/$maxread['maxreads'])*100+$r2*($wz_row['wzsuports']/$maxread['maxwzsuports'])*100+$r3*($pinci/7)*100);
+mysqli_query($connect,"UPDATE `wx_reads`.`wx_article` SET `pinci`='$pinci',`totals`='$totals' WHERE (`id`='{$wz_row['id']}');");
   if($i%2){
 ?>
     <tr bgcolor="#DBEDF4">
@@ -200,12 +201,16 @@ $j++;}
   
 }
 if(isset($_POST['create'])){
+  $r1=$_POST['r1'];
+  $r2=$_POST['r2'];
+  $r3=$_POST['r3'];
   $ptime = strtotime($_POST['dates']);
   $ntime = $ptime + 86400;
+  $stime = strtotime(date("Ymd",strtotime('-7 day',$ptime)));
   $j=0;
   while($type_row = mysqli_fetch_array($type)){
     $rarray[$j]['type_name']= $type_row['wx_type'];
-    $wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.socket,c.`wzreads`,c.`wzsuports`,c.`ctime`,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime and c.socket=0 order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
+    $wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.`wzreads`,c.`wzsuports`,c.`pinci`,c.`totals`,c.`ctime`,c.id,c.uid,c.socket,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime order by c.totals desc, c.wzreads desc,c.wzsuports desc LIMIT 20;");
     $i=1;
     while($wz_row = mysqli_fetch_assoc($wz)){
       $rarray[$j]['lists'][$i] = $wz_row;
@@ -228,7 +233,7 @@ if(isset($_POST['createw'])){
   $j=0;
   while($type_row = mysqli_fetch_array($type)){
     $rarray[$j]['type_name']= $type_row['wx_type'];
-    $wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.socket,c.`wzreads`,c.`wzsuports`,c.`ctime`,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime and c.socket=0 order by c.wzreads desc,c.wzsuports desc LIMIT 20;");
+    $wz = mysqli_query($connect,"select a.`gname`,c.`wztitle`,c.socket,c.`wzreads`,c.`wzsuports`,c.`pinci`,c.`totals`,c.`ctime`,c.wzurl from wx_article AS c LEFT JOIN wx_pinfo AS a on c.uid=a.id LEFT JOIN wx_type AS b on a.tid=b.id where b.`wx_type`='{$type_row['wx_type']}' and c.ctime>$ptime and c.ctime<$ntime and c.socket=0 order by c.totals desc, c.wzreads desc,c.wzsuports desc LIMIT 20;");
     $i=1;
     while($wz_row = mysqli_fetch_assoc($wz)){
       $rarray[$j]['lists'][$i] = $wz_row;
@@ -237,6 +242,7 @@ if(isset($_POST['createw'])){
       } 
     $j++;
   }
+  p($rarray);
 $smarty->assign("week",1);
 $smarty->assign("datesp",$ptime);
 $smarty->assign("datesn",$ntime);

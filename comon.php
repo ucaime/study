@@ -1,5 +1,5 @@
 <?php
-$connect = mysqli_connect("127.0.0.1", "root", "root") or die("链接数据库失败！");
+$connect = mysqli_connect("127.0.0.1", "cti", "son0326") or die("链接数据库失败！");
 mysqli_select_db($connect,"wx_reads" ) or die("选择数据库失败");
 mysqli_query($connect,"SET NAMES 'utf8'");
 function p($arr){
@@ -10,19 +10,19 @@ function p($arr){
 function arr_type($row='',$type_cur=''){
 	$type_html = "";
 	foreach($row as $key=>$k){
-		if($k[2] == $type_cur){
-			$type_html = $type_html."<option selected='selected' value={$k[2]}>{$k[2]}</option>";
+		if($k[1] == $type_cur){
+			$type_html = $type_html."<option selected='selected' value={$k[1]}>{$k[1]}</option>";
 			}else{
-				$type_html = $type_html."<option value={$k[2]}>{$k[2]}</option>";
+				$type_html = $type_html."<option value={$k[1]}>{$k[1]}</option>";
 			}
 		}
 	return $type_html;
 }
-function search_row($biao,$ziduan1,$ziduan2,$value){
-	$connect = mysqli_connect("127.0.0.1", "root", "root") or die("链接数据库失败！");
+function search_row($biao,$ziduan,$value){
+	$connect = mysqli_connect("127.0.0.1", "cti", "son0326") or die("链接数据库失败！");
 	mysqli_select_db($connect,"wx_reads" ) or die("选择数据库失败");
 	mysqli_query($connect,"SET NAMES 'utf8'");
-	$result = mysqli_query($connect,"select * from `{$biao}` where `{$ziduan1}` = '{$value}' || `{$ziduan2}` = '{$value}';");
+	$result = mysqli_query($connect,"select * from `{$biao}` where `{$ziduan}` = '{$value}';");
 	return mysqli_fetch_array($result);
 }
 function th($str){

@@ -32,6 +32,7 @@
 <body>
 <?php
 require 'comon.php';
+require_once 'Snoopy.class.php';
 require_once 'login.php';
 $ctime = time();
 $sql=mysqli_query($connect,"select * from wx_type order by ctime desc");
@@ -107,7 +108,7 @@ if(isset($_POST['urlchange'])){
   exit;
 }
 function th($str){
-  $title = str_replace(array("u201c","u201d","u2026","u200b","u2014","u2022"),array("“","”","...","","——","·"),$str);
+  $title = str_replace(array("u201c","u201d","u2026","u200b","u2014"),array("“","”","...","","——"),$str);
   return $title;
 }
 ?>
@@ -217,7 +218,7 @@ $gzh=mysqli_query($connect,"select a.`id`,b.`wx_type`,a.`gname`,a.`gnumber`,a.`g
       <td><?php echo $re_row['gnumber']; ?></td>
       <td><?php echo date('Y-m-d', $re_row['gtime']); ?></td>
       <td><?php echo $re_row['numbers']; ?></td>
-      <td><?php states($re_row['updates']); ?></td>
+      <td><?php urlstates($re_row['updates']); ?></td>
       <td><?php echo date('Y-m-d', $re_row['ctime']); ?></td>
     </tr>
         <?php
@@ -325,7 +326,7 @@ $gurl=mysqli_query($connect,"select c.`id`,a.`gname`,a.`gnumber`,b.`wx_type`,c.`
       <td><?php echo date('Y-m-d', $wenzhang['gtime']); ?></td>
       <td><?php echo $wenzhang['numbers']; ?></td>
       <td><?php echo $wenzhang['days']; ?></td>
-      <td><?php urlstates($wenzhang['state']); ?></td>
+      <td><?php states($wenzhang['state']); ?></td>
       <td><?php echo date('Y-m-d H:i:s', $wenzhang['uctime']); ?></td>
     </tr>
         <?php
